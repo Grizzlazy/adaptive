@@ -8,6 +8,7 @@ import Neighborhood11
 import Neighborhood10
 import Neighborhood_drone
 import numpy as np
+import openpyxl
 
 global LOOP
 global tabu_tenure
@@ -464,24 +465,64 @@ def Tabu_search_for_CVRP():
 
 
 
-result = []
-run_time = []
-avg = 0
-for i in range(ITE):
-    BEST = []
-    print("------------------------",i,"------------------------")
-    start_time = time.time()
-    best_fitness, best_sol, step = Tabu_search_for_CVRP()
-    print("---------- RESULT ----------")
-    print(best_sol)
-    print(best_fitness)
-    print(step)
-    avg += best_fitness/ITE
-    result.append(best_fitness)
-    print(Function.Check_if_feasible(best_sol))
-    end_time = time.time()
-    run = end_time - start_time
-    run_time.append(run)
-print(result)
-print(avg)
-print(run_time)
+dataList = []
+datatype = ['C101_', 'C201_', 'R101_', 'RC101_']
+beta = [0.5, 1, 1.5, 2, 2.5, 3]
+for i in range(len(datatype)):
+    for j in range(len(beta)):
+        datatemp = str(datatype[i]) + str(beta[j]) + '.dat'
+        dataList.append(datatemp)
+start_time = time.time()
+for k in range(len(dataList)):
+    print(k, dataList[k])
+    to_run = str(Data.file_path) + "\\" + str(dataList[k])
+    Data.read_data(to_run)
+    # to_run = str(Data.file_path) + "\\" + "C101_1.dat"
+    # Data.read_data(to_run)
+
+    result = []
+    step_avg = []
+    step_avg1 = []
+    avg = 0
+    for i in range(ITE):
+        BEST = []
+        print("------------------------",i,"------------------------")
+        
+        best_fitness, best_sol, step = Tabu_search_for_CVRP()
+        print("---------- RESULT ----------")
+        print(best_sol)
+        print(best_fitness)
+        avg += best_fitness/ITE
+        result.append(best_fitness)
+        step_avg.append(step[0])
+        step_avg1.append(step[1])
+        #print(Function.Check_if_feasible(best_sol))
+        #end_time = time.time()
+        #run = end_time - start_time
+        #run_time.append(run)
+    print(result)
+    #print(avg)
+    #print(run_time)
+    avg_step = [sum(step_avg)/10, sum(step_avg1)/10]
+    wb = openpyxl.load_workbook('Book.xlsx')
+
+    sheet = wb['15_40']
+
+    sheet.cell(row = k + 2, column = 1, value=dataList[k])
+    for i, value in enumerate(result, start=1):
+        sheet.cell(row= k + 2, column= 1 + i, value=value)
+    
+    for i, value in enumerate(avg_step, start=1):
+        sheet.cell(row= k + 2, column= 18 + i, value=value)
+
+    wb.save('Book.xlsx')
+
+    wb.close()
+
+end_time = time.time()
+run = end_time - start_time
+wb = openpyxl.load_workbook('Book.xlsx')
+sheet = wb['15_40']
+sheet.cell(row = len(dataList) + 3, column = 1, value=run)
+wb.save('Book.xlsx')
+wb.close()
