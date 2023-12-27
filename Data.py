@@ -9,7 +9,7 @@ import collections
 
 file_name = 'Result/15/C101_1-15.csv'
 file_name_csv = 'Result/result.csv'
-file_path = "test_data\\Smith\\TSPrd(time)\\Solomon\\15\\RC101_1.5.dat"
+file_path = "test_data\\data_demand_random\\TSPrd(time)\\Solomon\\15\\RC101_1.5.dat"
 # file_path = "test_data\\Smith\\TSPrd(time)\\Solomon\\50\\0_5TSP_50\\C101_0.5.dat"
 number_of_trucks = 1
 number_of_cities = 0
