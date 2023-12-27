@@ -1,0 +1,6 @@
+ print("------------------",i,"------------------")
+        print(current_neighborhood[index_best_nei][0])
+        print(current_sol)
+        print(current_fitness)
+        print(Function.Check_if_feasible(current_sol))
+        print(Function.cal_truck_time(current_sol))
