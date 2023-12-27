@@ -10,13 +10,16 @@ import collections
 file_name = 'Result/15/C101_1-15.csv'
 file_name_csv = 'Result/result.csv'
 file_path = "test_data\\data_demand_random\\TSPrd(time)\\Solomon\\30"
-# file_path = "test_data\\Smith\\TSPrd(time)\\Solomon\\50\\0_5TSP_50\\C101_0.5.dat"
-number_of_trucks = 1
+file_path_test = "test_data\\data_demand_random\\TSPrd(time)\\Solomon\\30\\C101_1.dat"
+number_of_trucks = 2
 number_of_cities = 0
-number_of_drones = 1
+number_of_drones = 2
 truck_speed = 0.5
 drone_speed = 1
-drone_capacity = 2
+DIFFERENTIAL_RATE_RELEASE_TIME = 1
+A_ratio = 1
+B_ratio = 1.2
+drone_capacity = 4
 drone_limit_time = 90
 city_demand = []
 release_date = []
@@ -161,5 +164,56 @@ def calculate_standard_deviation(arr):
     ratio = 1
     standard_deviation = (variance**0.5) * ratio
     return standard_deviation
- 
-read_data(file_path)
+
+def read_data_random(path):
+    global data
+    global number_of_cities
+    global euclid_flight_matrix
+    global manhattan_move_matrix
+    global city
+    global release_date
+    global city_demand
+    global standard_deviation
+    global value_tan_of_city
+    global file_name
+    global DIFFERENTIAL_RATE_RELEASE_TIME
+    global B_ratio
+    
+    f = open(path)
+    data = f.readlines()
+    number_of_cities = len(data) - 9
+    manhattan_move_matrix = [0] * number_of_cities
+    for i in range(number_of_cities):
+        manhattan_move_matrix[i] = [0] * number_of_cities
+    euclid_flight_matrix = [0] * number_of_cities
+    for i in range(number_of_cities):
+        euclid_flight_matrix[i] = [0] * number_of_cities
+    value_tan_of_city = [0] * number_of_cities
+    city = []
+    for i in range(8, 8 + number_of_cities):
+        city.append([])
+        line = data[i].split()
+        for j in range(0, 2):
+            city[i-8].append(float(line[j]))
+    for i in range(number_of_cities):
+        for j in range(number_of_cities):
+            euclid_flight_matrix[i][j] = euclid_distance(city[i], city[j]) / drone_speed
+    euclid_flight_matrix = numpy.array(euclid_flight_matrix)
+    for i in range(number_of_cities):
+        for j in range(number_of_cities):
+            manhattan_move_matrix[i][j] = manhattan_distance(city[i], city[j]) / truck_speed
+    manhattan_move_matrix = numpy.array(manhattan_move_matrix)
+    for i in range(1, number_of_cities):
+        value_tan_of_city[i] = calculate_angle(city[0], city[i])
+    release_date = []
+    city_demand = [0] * number_of_cities
+    for i in range(8, 8 + number_of_cities):
+        release_date.append([])
+        line = data[i].split()
+        release_date[i - 8] = int(line[-1])
+        city_demand[i - 8] = int(line[-2])
+    standard_deviation = calculate_standard_deviation(release_date)
+    # print(standard_deviation)
+    return data
+
+read_data_random(file_path_test)

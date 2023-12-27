@@ -89,13 +89,13 @@ def Tabu_search_for_CVRP():
     fitness2 = Function.fitness(current_sol2)
     fitness3 = Function.fitness(current_sol3)
     fitness4 = Function.fitness(current_sol4)
-    fitness5 = Function.fitness(current_sol5)
+    #fitness5 = Function.fitness(current_sol5)
 
     list_fitness_init.append(fitness1)
     list_fitness_init.append(fitness2)
     list_fitness_init.append(fitness3)
     list_fitness_init.append(fitness4)
-    list_fitness_init.append(fitness5)
+    #list_fitness_init.append(fitness5)
 
     
     current_fitness = list_fitness_init[0][0]
@@ -476,7 +476,7 @@ start_time = time.time()
 for k in range(len(dataList)):
     print(k, dataList[k])
     to_run = str(Data.file_path) + "\\" + str(dataList[k])
-    Data.read_data(to_run)
+    Data.read_data_random(to_run)
     # to_run = str(Data.file_path) + "\\" + "C101_1.dat"
     # Data.read_data(to_run)
 

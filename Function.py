@@ -454,47 +454,47 @@ def initial_solution5():
         for j in range(1, len(best_sol[0][i])):
             best_sol = Neighborhood.findLocationForDropPackage(best_sol, i, best_sol[0][i][j][0])
     
-    best_fitness = fitness(best_sol)[0]
-    current_sol = best_sol
-    current_fitness = best_fitness
+    # best_fitness = fitness(best_sol)[0]
+    # current_sol = best_sol
+    # current_fitness = best_fitness
     
-    for i in range(15):
-        neighborhood = []
+    # for i in range(15):
+    #     neighborhood = []
         
-        neighborhood1 = Neighborhood_drone.Neighborghood_change_drone_route_max_pro_plus(current_sol)
-        neighborhood2 = Neighborhood_drone.Neighborhood_group_trip(current_sol)
-        neighborhood3 = Neighborhood_drone.Neighborhood_change_index_trip(current_sol)
+    #     neighborhood1 = Neighborhood_drone.Neighborghood_change_drone_route_max_pro_plus(current_sol)
+    #     neighborhood2 = Neighborhood_drone.Neighborhood_group_trip(current_sol)
+    #     neighborhood3 = Neighborhood_drone.Neighborhood_change_index_trip(current_sol)
         
-        neighborhood.append([1, neighborhood1])
-        neighborhood.append([2, neighborhood2])
-        neighborhood.append([3, neighborhood3])
+    #     neighborhood.append([1, neighborhood1])
+    #     neighborhood.append([2, neighborhood2])
+    #     neighborhood.append([3, neighborhood3])
         
-        index = [-1] * len(neighborhood)
-        min_nei = [100000] * len(neighborhood)
+    #     index = [-1] * len(neighborhood)
+    #     min_nei = [100000] * len(neighborhood)
         
-        for j in range(len(neighborhood)):
-            for k in range(len(neighborhood[j][1])):
-                cfnode = neighborhood[j][1][k][1][0]
-                if cfnode - best_fitness < epsilon:
-                    min_nei[j] = cfnode
-                    index[j] = k
-                    best_fitness = cfnode
-                    best_sol = neighborhood[j][1][k][0]
-                    # if_improved = True
+    #     for j in range(len(neighborhood)):
+    #         for k in range(len(neighborhood[j][1])):
+    #             cfnode = neighborhood[j][1][k][1][0]
+    #             if cfnode - best_fitness < epsilon:
+    #                 min_nei[j] = cfnode
+    #                 index[j] = k
+    #                 best_fitness = cfnode
+    #                 best_sol = neighborhood[j][1][k][0]
+    #                 # if_improved = True
                                             
-                elif cfnode - min_nei[j] < epsilon:
-                    min_nei[j] = cfnode
-                    index[j] = k
-        index_best_nei = 0
-        best_fit_in_cur_loop = min_nei[0]
-        for j in range(1, len(min_nei)):
-            if min_nei[j] < best_fit_in_cur_loop:
-                index_best_nei = j
-                best_fit_in_cur_loop = min_nei[j]
-        if len(neighborhood[index_best_nei][1]) == 0:
-            continue
-        current_sol = neighborhood[index_best_nei][1][index[index_best_nei]][0]
-        current_fitness = neighborhood[index_best_nei][1][index[index_best_nei]][1][0]
+    #             elif cfnode - min_nei[j] < epsilon:
+    #                 min_nei[j] = cfnode
+    #                 index[j] = k
+    #     index_best_nei = 0
+    #     best_fit_in_cur_loop = min_nei[0]
+    #     for j in range(1, len(min_nei)):
+    #         if min_nei[j] < best_fit_in_cur_loop:
+    #             index_best_nei = j
+    #             best_fit_in_cur_loop = min_nei[j]
+    #     if len(neighborhood[index_best_nei][1]) == 0:
+    #         continue
+    #     current_sol = neighborhood[index_best_nei][1][index[index_best_nei]][0]
+    #     current_fitness = neighborhood[index_best_nei][1][index[index_best_nei]][1][0]
             
     return best_sol   
     
