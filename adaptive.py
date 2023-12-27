@@ -25,7 +25,7 @@ global BEST
 tabu_tenure = 30
 tabu_tenure1 = tabu_tenure3 = tabu_tenure2 = 20
 LOOP = 60
-ITE = 1
+ITE = 10
 SEGMENT = 5
 epsilon = (-1) * 0.00001
 # 15:   120,    20:    150
@@ -504,9 +504,9 @@ for k in range(len(dataList)):
     #print(avg)
     #print(run_time)
     avg_step = [sum(step_avg)/10, sum(step_avg1)/10]
-    wb = openpyxl.load_workbook('Book.xlsx')
+    wb = openpyxl.load_workbook('Book1.xlsx')
 
-    sheet = wb['15_40']
+    sheet = wb['30']
 
     sheet.cell(row = k + 2, column = 1, value=dataList[k])
     for i, value in enumerate(result, start=1):
@@ -521,8 +521,8 @@ for k in range(len(dataList)):
 
 end_time = time.time()
 run = end_time - start_time
-wb = openpyxl.load_workbook('Book.xlsx')
-sheet = wb['15_40']
+wb = openpyxl.load_workbook('Book1.xlsx')
+sheet = wb['30']
 sheet.cell(row = len(dataList) + 3, column = 1, value=run)
 wb.save('Book.xlsx')
 wb.close()
