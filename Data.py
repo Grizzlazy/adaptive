@@ -9,11 +9,11 @@ import collections
 
 file_name = 'Result/15/C101_1-15.csv'
 file_name_csv = 'Result/result.csv'
-file_path = "test_data\\data_demand_random\\TSPrd(time)\\Solomon\\30"
+file_path = "test_data\\data_demand_random\\TSPrd(time)\\Solomon\\50"
 file_path_test = "test_data\\data_demand_random\\TSPrd(time)\\Solomon\\30\\C101_1.dat"
-number_of_trucks = 2
+number_of_trucks = 1
 number_of_cities = 0
-number_of_drones = 2
+number_of_drones = 1
 truck_speed = 0.5
 drone_speed = 1
 DIFFERENTIAL_RATE_RELEASE_TIME = 1
@@ -206,12 +206,11 @@ def read_data_random(path):
     for i in range(1, number_of_cities):
         value_tan_of_city[i] = calculate_angle(city[0], city[i])
     release_date = []
-    city_demand = [0] * number_of_cities
+    city_demand = [1] * number_of_cities
     for i in range(8, 8 + number_of_cities):
         release_date.append([])
         line = data[i].split()
         release_date[i - 8] = int(line[-1])
-        city_demand[i - 8] = int(line[-2])
     standard_deviation = calculate_standard_deviation(release_date)
     # print(standard_deviation)
     return data

@@ -59,7 +59,7 @@ def Tabu_search_for_CVRP():
     current_sol2 = Function.initial_solution()
     current_sol3 = Function.initial_solution3()
     current_sol4 = Function.initial_solution4()
-    current_sol5 = Function.initial_solution5()
+    #current_sol5 = Function.initial_solution5()
     
     current_sol1 = Neighborhood.Optimize_initial_solution_in_drone(current_sol1)
     current_sol2 = Neighborhood.Optimize_initial_solution_in_drone(current_sol2)
@@ -70,7 +70,7 @@ def Tabu_search_for_CVRP():
     list_init.append(current_sol2)
     list_init.append(current_sol3)
     list_init.append(current_sol4)
-    list_init.append(current_sol5)
+    #list_init.append(current_sol5)
 
     
     
@@ -79,13 +79,13 @@ def Tabu_search_for_CVRP():
     fitness2 = Function.fitness(current_sol2)
     fitness3 = Function.fitness(current_sol3)
     fitness4 = Function.fitness(current_sol4)
-    fitness5 = Function.fitness(current_sol5)
+    #fitness5 = Function.fitness(current_sol5)
 
     list_fitness_init.append(fitness1)
     list_fitness_init.append(fitness2)
     list_fitness_init.append(fitness3)
     list_fitness_init.append(fitness4)
-    list_fitness_init.append(fitness5)
+    #list_fitness_init.append(fitness5)
 
     
     current_fitness = list_fitness_init[0][0]

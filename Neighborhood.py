@@ -394,7 +394,7 @@ def findLocationForDropPackage(new_solution, index_truck, drop_package):
     stop = False
     stop1 = False
     max_index = - 1  # Tìm điểm cuối cùng có thể nhận được new_package hợp lệ trên route_truck
-    if Data.release_date[drop_package] == 0:
+    if Data.release_date[drop_package] == 0 or Data.city_demand[drop_package] > Data.drone_capacity:
         new_solution[0][index_truck][0][1] += [drop_package]
         stop = True
     elif Function.max_release_date(new_solution[0][index_truck][0][1]) * DIFFERENTIAL_RATE_RELEASE_TIME + Data.standard_deviation > \
