@@ -181,7 +181,7 @@ def read_data_random(path):
     
     f = open(path)
     data = f.readlines()
-    number_of_cities = len(data) - 9
+    number_of_cities = len(data) - 8
     manhattan_move_matrix = [0] * number_of_cities
     for i in range(number_of_cities):
         manhattan_move_matrix[i] = [0] * number_of_cities
@@ -214,5 +214,3 @@ def read_data_random(path):
     standard_deviation = calculate_standard_deviation(release_date)
     # print(standard_deviation)
     return data
-
-read_data_random(file_path_test)

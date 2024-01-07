@@ -9,6 +9,7 @@ import Neighborhood10
 import Neighborhood_drone
 import numpy as np
 import openpyxl
+import copy
 
 global LOOP
 global tabu_tenure
@@ -22,8 +23,8 @@ global BEST
 
 # Set up chỉ số -------------------------------------------------------------------
 # 15:   50 - 35,    20:    60 - 40    10:   20 - 15
-tabu_tenure = 30
-tabu_tenure1 = tabu_tenure3 = tabu_tenure2 = 15
+tabu_tenure = 10
+tabu_tenure1 = tabu_tenure3 = tabu_tenure2 = 7
 LOOP = 60
 ITE = 3
 SEGMENT = 5
@@ -33,8 +34,9 @@ BREAKLOOP = 10
 LOOP_IMPROVED = 0
 SET_LAST_10 = [] 
 BEST = []
-time_limit = 100
-
+time_limit = 800
+time_limit_seg = 200
+time_limit_post_opt = 100
 
 # Set up chỉ số -------------------------------------------------------------------
 
@@ -63,39 +65,39 @@ def Tabu_search_for_CVRP():
     # for i in range(Data.number_of_cities):
     #     row = [tabu_tenure * (-1)] * Data.number_of_cities
     #     Tabu_Structure2.append(row)
-        
+    st_time = time.time()
     list_init = []
-    current_sol1 = Function.initial_solution1()
-    current_sol2 = Function.initial_solution()
-    current_sol3 = Function.initial_solution3()
-    current_sol4 = Function.initial_solution4()
-    #current_sol5 = Function.initial_solution5()
+    #current_sol1 = Function.initial_solution1()
+    #current_sol2 = Function.initial_solution()
+    #current_sol3 = Function.initial_solution3()
+    #current_sol4 = Function.initial_solution4()
+    current_sol5 = Function.initial_solution5()
     
-    current_sol1 = Neighborhood.Optimize_initial_solution_in_drone(current_sol1)
-    current_sol2 = Neighborhood.Optimize_initial_solution_in_drone(current_sol2)
-    current_sol3 = Neighborhood.Optimize_initial_solution_in_drone(current_sol3)
-    current_sol4 = Neighborhood.Optimize_initial_solution_in_drone(current_sol4)
+    #current_sol1 = Neighborhood.Optimize_initial_solution_in_drone(current_sol1)
+    #current_sol2 = Neighborhood.Optimize_initial_solution_in_drone(current_sol2)
+    #current_sol3 = Neighborhood.Optimize_initial_solution_in_drone(current_sol3)
+    #current_sol4 = Neighborhood.Optimize_initial_solution_in_drone(current_sol4)
     
-    list_init.append(current_sol1)
-    list_init.append(current_sol2)
-    list_init.append(current_sol3)
-    list_init.append(current_sol4)
-    #list_init.append(current_sol5)
+    #list_init.append(current_sol1)
+    #list_init.append(current_sol2)
+    #list_init.append(current_sol3)
+    #list_init.append(current_sol4)
+    list_init.append(current_sol5)
 
     
     
     list_fitness_init = []
-    fitness1 = Function.fitness(current_sol1)
-    fitness2 = Function.fitness(current_sol2)
-    fitness3 = Function.fitness(current_sol3)
-    fitness4 = Function.fitness(current_sol4)
-    #fitness5 = Function.fitness(current_sol5)
+    #fitness1 = Function.fitness(current_sol1)
+    #fitness2 = Function.fitness(current_sol2)
+    #fitness3 = Function.fitness(current_sol3)
+    #fitness4 = Function.fitness(current_sol4)
+    fitness5 = Function.fitness(current_sol5)
 
-    list_fitness_init.append(fitness1)
-    list_fitness_init.append(fitness2)
-    list_fitness_init.append(fitness3)
-    list_fitness_init.append(fitness4)
-    #list_fitness_init.append(fitness5)
+    #list_fitness_init.append(fitness1)
+    #list_fitness_init.append(fitness2)
+    #list_fitness_init.append(fitness3)
+    #list_fitness_init.append(fitness4)
+    list_fitness_init.append(fitness5)
 
     
     current_fitness = list_fitness_init[0][0]
@@ -124,13 +126,14 @@ def Tabu_search_for_CVRP():
     T = 0
     nei_set = [0, 1, 2, 3, 4]
     weight = [1/len(nei_set)]*len(nei_set)
-    step = [0, 0] 
-    while(T < SEGMENT):
+    step = [0, 0]
+
+    while(True):
         #factor = random.uniform(0.1, 0.3)
         factor = 0.5 #0.3 0.6
         score = [0]*len(nei_set)
         used = [0]*len(nei_set)
-        st_time = time.time()
+        st = time.time()
         for i in range(LOOP):
             prev_fitness = current_fitness
             choose = roulette_wheel_selection(nei_set, weight)
@@ -411,29 +414,32 @@ def Tabu_search_for_CVRP():
                         weight[j] = (1 - factor)*weight[j] + factor*score[j]/used[j]
             if flag == True:
                 step = [LOOP_IMPROVED, T]
-
+            ed = time.time()
+            if ed - st > time_limit_seg: break
+            cur_time = time.time()
+            elapsed_time = cur_time - st_time
+            if elapsed_time > time_limit: break
             print("------------------",i,"------------------")
             print(current_neighborhood[index_best_nei][0])
             print(current_sol)
             print(current_fitness)
-            # print(Function.Check_if_feasible(current_sol))
-            # print(Function.cal_truck_time(current_sol))
-            # print(Tabu_Structure)
-            # print(Tabu_Structure1)
-            # print(Tabu_Structure2)
-            # print(Tabu_Structure3)
-            cur_time = time.time()
-            elapsed_time = cur_time - st_time
-            if elapsed_time - time_limit > epsilon:
-                break
-            
-        
-        print("--before post optimization--")
+            print(Function.Check_if_feasible(current_sol))
+            print(Function.cal_truck_time(current_sol))
+            print(Tabu_Structure)
+            print(Tabu_Structure1)
+            print(Tabu_Structure2)
+            print(Tabu_Structure3)
+       
+        print(elapsed_time)
+        print("-------T--------")
         print(best_fitness)
         print(T, best_sol, "\n", best_fitness)
         print(used, score)
         T +=1
+        if elapsed_time > time_limit: break
+        
 
+    s = time.time()
     for ii in range(len(BEST)):
         
         option = [Neighborhood.Neighborhood_combine_truck_and_drone_neighborhood, Neighborhood.Neighborhood_combine_truck_and_drone_neighborhood,
@@ -466,7 +472,11 @@ def Tabu_search_for_CVRP():
                         stop = True
         if bet_fit - best_fitness < epsilon:
             best_sol = BEST[ii]
-            best_fitness = bet_fit    
+            best_fitness = bet_fit
+
+        c = time.time()
+        if c - s > time_limit_post_opt:
+            break  
 
     return best_fitness, best_sol, step
 
@@ -479,10 +489,10 @@ for i in range(len(datatype)):
     for j in range(len(beta)):
         datatemp = str(datatype[i]) + str(beta[j]) + '.dat'
         dataList.append(datatemp)
-start_time = time.time()
+
+
 for k in range(len(dataList)):
     print(k, dataList[k])
-    #to_run = str(Data.file_path) + "\\" + "C201_2.dat"
     to_run = str(Data.file_path) + "\\" + str(dataList[k])
     Data.read_data_random(to_run)
     # to_run = str(Data.file_path) + "\\" + "C101_1.dat"
@@ -491,11 +501,14 @@ for k in range(len(dataList)):
     result = []
     step_avg = []
     step_avg1 = []
+    run_time = []
     avg = 0
+    sol = []
+    prev_fitness = 999999999999 
     for i in range(ITE):
         BEST = []
         print("------------------------",i,"------------------------")
-        
+        start_time = time.time()
         best_fitness, best_sol, step = Tabu_search_for_CVRP()
         print("---------- RESULT ----------")
         print(best_sol)
@@ -505,33 +518,27 @@ for k in range(len(dataList)):
         step_avg.append(step[0])
         step_avg1.append(step[1])
         #print(Function.Check_if_feasible(best_sol))
-        #end_time = time.time()
-        #run = end_time - start_time
-        #run_time.append(run)
+        end_time = time.time()
+        run = end_time - start_time
+        run_time.append(run)
+        if best_fitness - prev_fitness < epsilon: 
+            sol = copy.deepcopy(best_sol)
+            prev_fitness = best_fitness
     print(result)
-    #print(avg)
-    #print(run_time)
-    avg_step = [sum(step_avg)/10, sum(step_avg1)/10]
-
-    wb = openpyxl.load_workbook('Book1.xlsx')
-
+    print(run_time)
+    avg_step = [sum(step_avg)/ITE, sum(step_avg1)/ITE]
+    wb = openpyxl.load_workbook('Book.xlsx')
+    avg_time = sum(run_time)/len(run_time)
     sheet = wb['50']
 
     sheet.cell(row = k + 2, column = 1, value=dataList[k])
     for i, value in enumerate(result, start=1):
         sheet.cell(row= k + 2, column= 1 + i, value=value)
-
+    sheet.cell(row = k + 2, column = 17, value = avg_time)
     for i, value in enumerate(avg_step, start=1):
         sheet.cell(row= k + 2, column= 18 + i, value=value)
+    #print("đây nè", sol)
+    sheet.cell(row = k + 2, column = 18, value = str(sol))
+    wb.save('Book.xlsx')
 
-    wb.save('Book1.xlsx')
-
-    wb.close()
-
-    end_time = time.time()
-    run = end_time - start_time
-    wb = openpyxl.load_workbook('Book1.xlsx')
-    sheet = wb['50']
-    sheet.cell(row = len(dataList) + 3, column = 1, value=run)
-    wb.save('Book1.xlsx')
     wb.close()
