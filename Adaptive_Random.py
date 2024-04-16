@@ -10,7 +10,6 @@ import Neighborhood_drone
 import numpy as np
 import openpyxl
 import copy
-import math
 
 global LOOP
 global tabu_tenure
@@ -24,10 +23,10 @@ global BEST
 
 # Set up chỉ số -------------------------------------------------------------------
 # 15:   50 - 35,    20:    60 - 40    10:   20 - 15
-N = 10
-
+tabu_tenure = 10
+tabu_tenure1 = tabu_tenure3 = tabu_tenure2 = 7
+LOOP = 60
 ITE = 5
-LOOP = int(N*math.log(N))
 SEGMENT = 5
 epsilon = (-1) * 0.00001
 # 15:   120,    20:    150
@@ -37,7 +36,7 @@ SET_LAST_10 = []
 BEST = []
 # Set up chỉ số -------------------------------------------------------------------
 
-# Hai mẫu bị lỗi khi chạy bộ 10 C101_1 that vào ở initial solution để thử 
+# Hai mẫu bị lỗi khi chạy bộ 10 C101 1 that vào ở initial solution để thử 
 check = [[[[0, [1]], [1, []], [8, [8, 14, 15]], [5, [5, 2, 13, 6]], [14, []], [15, []], [2, []], [13, []], [6, []]], [[0, []], [12, [12, 4, 3, 10]], [4, []], [3, []], [9, [9, 11, 7]], [10, []], [11, []], [7, []]]], [[[8, [8, 14, 15]]], [[5, [5, 2, 13, 6]]], [[12, [12, 4, 3, 10]]], [[9, [9, 11, 7]]]]]
 
 def roulette_wheel_selection(population, fitness_scores):
@@ -53,7 +52,10 @@ def Tabu_search_for_CVRP():
     
     Data1 = [['act', 'fitness', 'change1', 'change2', 'solution', 'tabu structue', 'tabu structure1']]
     
-
+    Tabu_Structure = [tabu_tenure * (-1)] * Data.number_of_cities
+    Tabu_Structure1 = [tabu_tenure1 * (-1)] * Data.number_of_cities
+    Tabu_Structure2 = [tabu_tenure1 * (-1)] * Data.number_of_cities
+    Tabu_Structure3 = [tabu_tenure1 * (-1)] * Data.number_of_cities
         
     # Tabu_Structure2 = []
     # for i in range(Data.number_of_cities):
@@ -120,20 +122,12 @@ def Tabu_search_for_CVRP():
     nei_set = [0, 1, 2, 3, 4, 5]
     weight = [1/len(nei_set)]*len(nei_set)
     step = [0, 0]
-
     while(T < SEGMENT):
-        tabu_tenure = tabu_tenure1 = tabu_tenure3 = tabu_tenure2 = random.uniform(2*math.log(N), N)
-        Tabu_Structure = [tabu_tenure * (-1)] * Data.number_of_cities
-        Tabu_Structure1 = [tabu_tenure1 * (-1)] * Data.number_of_cities
-        Tabu_Structure2 = [tabu_tenure1 * (-1)] * Data.number_of_cities
-        Tabu_Structure3 = [tabu_tenure1 * (-1)] * Data.number_of_cities
         #factor = random.uniform(0.1, 0.3)
-        factor = 0.3 #0.3 0.6
+        factor = 0.6 #0.3 0.6
         score = [0]*len(nei_set)
         used = [0]*len(nei_set)
-        prev_f = best_fitness
         for i in range(LOOP):
-        # for i in range (LOOP):
             prev_fitness = current_fitness
             choose = roulette_wheel_selection(nei_set, weight)
             # print("------------------",i,"------------------")
@@ -179,10 +173,12 @@ def Tabu_search_for_CVRP():
                 elif choose == 2:
                     current_neighborhood1 = Neighborhood10.Neighborhood_one_otp(current_sol, current_truck_time)
                     current_neighborhood.append([1, current_neighborhood1])
- 
+                    
                 elif choose == 3:
+                    # current_neighborhood9point5 = Neighborhood.Neighborhood_combine_truck_and_drone_neighborhood(Neighborhood.one_opt_and_change_truck_route_after, sol_chosen_to_break, 5, 3, True)
                     current_neighborhood9 = Neighborhood.Neighborhood_combine_truck_and_drone_neighborhood(Neighborhood.one_opt_and_change_truck_route_after, current_sol, 5, 3, True)
                     current_neighborhood9 = current_neighborhood9 
+
                     current_neighborhood.append([9, current_neighborhood9])
                     if i - LOOP_IMPROVED > BREAKLOOP - 7:
                         LOOP_IMPROVED += 10
@@ -356,9 +352,9 @@ def Tabu_search_for_CVRP():
             if i % 10 < 7:
                 used[choose] += 1
                 if flag == True:
-                    score[choose] += 0.3
+                    score[choose] += 0.5
                 elif current_fitness - prev_fitness < epsilon:
-                    score[choose] += 0.2
+                    score[choose] += 0.3
                 else:
                     score[choose] += 0.1
                 for j in range(len(nei_set)):
@@ -368,7 +364,6 @@ def Tabu_search_for_CVRP():
                         weight[j] = (1 - factor)*weight[j] + factor*score[j]/used[j]
             if flag == True:
                 step = [LOOP_IMPROVED, T]
-
 
             # print("------------------",i,"------------------")
             # print(current_neighborhood[index_best_nei][0])
@@ -381,10 +376,7 @@ def Tabu_search_for_CVRP():
         print(best_fitness)
         print(T, best_sol, "\n", best_fitness)
         print(used, score)
-        if best_fitness - prev_f < epsilon:
-            T = 0
-        else:
-            T += 1
+        T +=1
 
     '''for ii in range(len(BEST)):
         
@@ -426,18 +418,18 @@ def Tabu_search_for_CVRP():
 
 dataList = []
 datatype = ['C101_', 'C201_', 'R101_', 'RC101_']
-beta = [0.5, 1.5, 1, 2.5, 2, 3]
+beta = [0.5, 1.5, 1, 2, 2.5, 3]
 for i in range(len(datatype)):
     for j in range(len(beta)):
         datatemp = str(datatype[i]) + str(beta[j]) + '.dat'
         dataList.append(datatemp)
 
 
-for k in range(1): #len(dataList)):
+for k in range(len(dataList)):
     print(k, dataList[k])
-    file_path = "test_data\\Smith\\TSPrd(time)\\Solomon\\10"
+    file_path = "test_data\\data_demand_random\\TSPrd(time)\\Solomon\\10"
     to_run = str(file_path) + "\\" + str(dataList[k])
-    Data.read_data(to_run)
+    Data.read_data_random(to_run)
     # to_run = str(Data.file_path) + "\\" + "C101_1.dat"
     # Data.read_data(to_run)
 
@@ -472,7 +464,7 @@ for k in range(1): #len(dataList)):
     avg_step = [sum(step_avg)/ITE, sum(step_avg1)/ITE]
     wb = openpyxl.load_workbook('Result_5.xlsx')
     avg_time = sum(run_time)/len(run_time)
-    sheet = wb['Factor(0,3;0,5)_Smith']
+    sheet = wb['Factor(0,6;0,5)_Random']
 
     sheet.cell(row = k + 2, column = 1, value=dataList[k])
     for i, value in enumerate(result, start=1):
@@ -480,7 +472,8 @@ for k in range(1): #len(dataList)):
     sheet.cell(row = k + 2, column = 17, value = avg_time)
     for i, value in enumerate(avg_step, start=1):
         sheet.cell(row= k + 2, column= 18 + i, value=value)
+    #print("đây nè", sol)
     sheet.cell(row = k + 2, column = 18, value = str(sol))
-    wb.save('Result_51.xlsx')
+    wb.save('Result_5.xlsx')
 
     wb.close()

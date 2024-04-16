@@ -9,11 +9,11 @@ import collections
 
 file_name = 'Result/15/C101_1-15.csv'
 file_name_csv = 'Result/result.csv'
-file_path = "test_data\\data_demand_random\\TSPrd(time)\\Solomon\\50"
-file_path_test = "test_data\\data_demand_random\\TSPrd(time)\\Solomon\\30\\C101_1.dat"
+file_path = "test_data\\Smith\\TSPrd(time)\\Solomon\\10\\C201_3.dat"
+
 number_of_trucks = 1
 number_of_cities = 0
-number_of_drones = 1
+number_of_drones = 1     
 truck_speed = 0.5
 drone_speed = 1
 DIFFERENTIAL_RATE_RELEASE_TIME = 1
@@ -210,7 +210,26 @@ def read_data_random(path):
     for i in range(8, 8 + number_of_cities):
         release_date.append([])
         line = data[i].split()
+        city_demand[i - 8] = int(line[-2])
         release_date[i - 8] = int(line[-1])
     standard_deviation = calculate_standard_deviation(release_date)
     # print(standard_deviation)
     return data
+
+'''file_path_test = "test_data\\Smith\\TSPrd(time)\\Solomon\\15\\C201_2.dat"
+read_data(file_path_test)
+
+import matplotlib.pyplot as plt
+
+for i in range(len(city)):
+    if i == 0:
+        plt.scatter(city[i][0], city[i][1], color='green', label = 'depot')
+    else:
+        plt.scatter(city[i][0], city[i][1], color='red')
+    plt.text(city[i][0] + 0.5, city[i][1] + 0.5, str(release_date[i]), fontsize=8, ha='right', va='bottom')
+    plt.text(city[i][0] - 0.5, city[i][1] - 0.5, str((city[i][0], city[i][1])), fontsize=8, ha='center', va='top')
+plt.gca().set_aspect('equal', adjustable='box')
+plt.legend()
+plt.xlabel('X-axis')
+plt.ylabel('Y-axis')
+plt.show()'''

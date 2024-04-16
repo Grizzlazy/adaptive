@@ -1174,3 +1174,6 @@ def find_position(package, solution):
                 break
 
     return position
+# Data.read_data(Data.file_path)
+# check = [[[[0, [10]], [10, []]], [[0, [1]], [5, [5, 3, 2, 6, 9, 8, 7, 4]], [3, []], [4, []], [1, []], [2, []], [6, []], [9, []], [8, []], [7, []]]], [[[5, [6, 9, 8, 7]]], [[5, [5, 3, 2, 4]]]]]
+# print(fitness(check))

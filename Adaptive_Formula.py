@@ -11,7 +11,6 @@ import numpy as np
 import openpyxl
 import copy
 import math
-
 global LOOP
 global tabu_tenure
 global best_sol
@@ -24,20 +23,19 @@ global BEST
 
 # Set up chỉ số -------------------------------------------------------------------
 # 15:   50 - 35,    20:    60 - 40    10:   20 - 15
-N = 10
 
-ITE = 5
-LOOP = int(N*math.log(N))
+
+ITE = 10
 SEGMENT = 5
 epsilon = (-1) * 0.00001
 # 15:   120,    20:    150
-BREAKLOOP = 10
+
 LOOP_IMPROVED = 0
 SET_LAST_10 = [] 
 BEST = []
 # Set up chỉ số -------------------------------------------------------------------
 
-# Hai mẫu bị lỗi khi chạy bộ 10 C101_1 that vào ở initial solution để thử 
+# Hai mẫu bị lỗi khi chạy bộ 10 C101 1 that vào ở initial solution để thử 
 check = [[[[0, [1]], [1, []], [8, [8, 14, 15]], [5, [5, 2, 13, 6]], [14, []], [15, []], [2, []], [13, []], [6, []]], [[0, []], [12, [12, 4, 3, 10]], [4, []], [3, []], [9, [9, 11, 7]], [10, []], [11, []], [7, []]]], [[[8, [8, 14, 15]]], [[5, [5, 2, 13, 6]]], [[12, [12, 4, 3, 10]]], [[9, [9, 11, 7]]]]]
 
 def roulette_wheel_selection(population, fitness_scores):
@@ -62,18 +60,18 @@ def Tabu_search_for_CVRP():
     list_init = []
     #current_sol1 = Function.initial_solution1()
     #current_sol2 = Function.initial_solution()
-    #current_sol3 = Function.initial_solution3()
+    # current_sol3 = Function.initial_solution3()
     #current_sol4 = Function.initial_solution4()
     current_sol5 = Function.initial_solution5()
     
     #current_sol1 = Neighborhood.Optimize_initial_solution_in_drone(current_sol1)
     #current_sol2 = Neighborhood.Optimize_initial_solution_in_drone(current_sol2)
-    #current_sol3 = Neighborhood.Optimize_initial_solution_in_drone(current_sol3)
+    # current_sol3 = Neighborhood.Optimize_initial_solution_in_drone(current_sol3)
     #current_sol4 = Neighborhood.Optimize_initial_solution_in_drone(current_sol4)
     
     #list_init.append(current_sol1)
     #list_init.append(current_sol2)
-    #list_init.append(current_sol3)
+    # list_init.append(current_sol3)
     #list_init.append(current_sol4)
     list_init.append(current_sol5)
 
@@ -82,13 +80,13 @@ def Tabu_search_for_CVRP():
     list_fitness_init = []
     #fitness1 = Function.fitness(current_sol1)
     #fitness2 = Function.fitness(current_sol2)
-    #fitness3 = Function.fitness(current_sol3)
+    # fitness3 = Function.fitness(current_sol3)
     #fitness4 = Function.fitness(current_sol4)
     fitness5 = Function.fitness(current_sol5)
 
     #list_fitness_init.append(fitness1)
     #list_fitness_init.append(fitness2)
-    #list_fitness_init.append(fitness3)
+    # list_fitness_init.append(fitness3)
     #list_fitness_init.append(fitness4)
     list_fitness_init.append(fitness5)
 
@@ -120,9 +118,10 @@ def Tabu_search_for_CVRP():
     nei_set = [0, 1, 2, 3, 4, 5]
     weight = [1/len(nei_set)]*len(nei_set)
     step = [0, 0]
-
     while(T < SEGMENT):
-        tabu_tenure = tabu_tenure1 = tabu_tenure3 = tabu_tenure2 = random.uniform(2*math.log(N), N)
+        tabu_tenure = tabu_tenure1 = tabu_tenure3 = tabu_tenure2 = random.uniform(2*math.log(Data.number_of_cities), Data.number_of_cities)
+        LOOP = int(Data.number_of_cities*math.log(Data.number_of_cities))
+        BREAKLOOP = Data.number_of_cities
         Tabu_Structure = [tabu_tenure * (-1)] * Data.number_of_cities
         Tabu_Structure1 = [tabu_tenure1 * (-1)] * Data.number_of_cities
         Tabu_Structure2 = [tabu_tenure1 * (-1)] * Data.number_of_cities
@@ -133,7 +132,6 @@ def Tabu_search_for_CVRP():
         used = [0]*len(nei_set)
         prev_f = best_fitness
         for i in range(LOOP):
-        # for i in range (LOOP):
             prev_fitness = current_fitness
             choose = roulette_wheel_selection(nei_set, weight)
             # print("------------------",i,"------------------")
@@ -168,37 +166,30 @@ def Tabu_search_for_CVRP():
                         best_sol = new_solution
                         best_fitness = new_fitness
                 continue
-            elif i % 10 < 7:
+            else:
                 # current_neighborhood1 = Neighborhood.Neighborhood_one_otp_fix(current_sol)
                 if choose == 0:
-                    current_neighborhood4 = Neighborhood11.Neighborhood_move_2_1(current_sol)
+                    current_neighborhood4 = Neighborhood.Neighborhood_combine_truck_and_drone_neighborhood_with_tabu_list(name_of_truck_neiborhood=Neighborhood11.Neighborhood_move_2_1, solution=current_sol, number_of_potial_solution=1, number_of_loop_drone=2, tabu_list=Tabu_Structure2, tabu_tenure=tabu_tenure2,  index_of_loop=i, best_fitness=best_fitness, kind_of_tabu_structure=4, need_truck_time=False)
                     current_neighborhood.append([4, current_neighborhood4])
                 elif choose == 1:
-                    current_neighborhood3 = Neighborhood11.Neighborhood_move_1_1_ver2(current_sol)
-                    current_neighborhood.append([3, current_neighborhood3])
+                    current_neighborhood11 = Neighborhood.Neighborhood_combine_truck_and_drone_neighborhood_with_tabu_list(name_of_truck_neiborhood=Neighborhood11.Neighborhood_move_1_1_ver2, solution=current_sol, number_of_potial_solution=1, number_of_loop_drone=2, tabu_list=Tabu_Structure1, tabu_tenure=tabu_tenure1,  index_of_loop=i, best_fitness=best_fitness, kind_of_tabu_structure=3, need_truck_time=False)
+                    current_neighborhood.append([3, current_neighborhood11])
                 elif choose == 2:
-                    current_neighborhood1 = Neighborhood10.Neighborhood_one_otp(current_sol, current_truck_time)
-                    current_neighborhood.append([1, current_neighborhood1])
- 
+                    current_neighborhood11 = Neighborhood.Neighborhood_combine_truck_and_drone_neighborhood_with_tabu_list(name_of_truck_neiborhood=Neighborhood10.Neighborhood_one_otp, solution=current_sol, number_of_potial_solution=1, number_of_loop_drone=2, tabu_list=Tabu_Structure, tabu_tenure=tabu_tenure,  index_of_loop=i, best_fitness=best_fitness, kind_of_tabu_structure=1, need_truck_time=True)
+                    current_neighborhood.append([1, current_neighborhood11])
                 elif choose == 3:
                     current_neighborhood9 = Neighborhood.Neighborhood_combine_truck_and_drone_neighborhood(Neighborhood.one_opt_and_change_truck_route_after, current_sol, 5, 3, True)
-                    current_neighborhood9 = current_neighborhood9 
+                    current_neighborhood9 = current_neighborhood9
                     current_neighborhood.append([9, current_neighborhood9])
                     if i - LOOP_IMPROVED > BREAKLOOP - 7:
                         LOOP_IMPROVED += 10
-                elif choose == 4:
-                    current_neighborhood2 = Neighborhood10.Neighborhood_one_otp_plus(current_sol, current_truck_time)
-                    current_neighborhood.append([2, current_neighborhood2])
                 else:
-                    current_neighborhood5 = Neighborhood11.Neighborhood_two_opt_tue(current_sol)
-                    current_neighborhood.append([5, current_neighborhood5])
-            else:
-                current_neighborhood7 = Neighborhood_drone.Neighborhood_group_trip(current_sol)
-                current_neighborhood.append([7, current_neighborhood7])
-                current_neighborhood6 = Neighborhood_drone.Neighborghood_change_drone_route_max_pro_plus(current_sol)
-                current_neighborhood.append([6, current_neighborhood6])
-                current_neighborhood8 = Neighborhood_drone.Neighborhood_change_index_trip(current_sol)
-                current_neighborhood.append([8, current_neighborhood8])
+                    current_neighborhood11 = Neighborhood.Neighborhood_combine_truck_and_drone_neighborhood_with_tabu_list(name_of_truck_neiborhood=Neighborhood10.Neighborhood_one_otp_plus, solution=current_sol, number_of_potial_solution=1, number_of_loop_drone=2, tabu_list=Tabu_Structure, tabu_tenure=tabu_tenure,  index_of_loop=i, best_fitness=best_fitness, kind_of_tabu_structure=2, need_truck_time=True)
+                    current_neighborhood.append([2, current_neighborhood11])
+                # else:
+                #     current_neighborhood12 = Neighborhood.Neighborhood_combine_truck_and_drone_neighborhood_with_tabu_list(name_of_truck_neiborhood=Neighborhood11.Neighborhood_two_opt_tue, solution=current_sol, number_of_potial_solution=1, number_of_loop_drone=2, tabu_list=Tabu_Structure3, tabu_tenure=tabu_tenure3,  index_of_loop=i, best_fitness=best_fitness, kind_of_tabu_structure=5, need_truck_time=False)
+                #     current_neighborhood.append([5, current_neighborhood12])
+
             index = [-1] * len(current_neighborhood)
             min_nei = [100000] * len(current_neighborhood)
             min_sum = [1000000000] * len(current_neighborhood)
@@ -353,22 +344,20 @@ def Tabu_search_for_CVRP():
                 temp = [current_neighborhood[index_best_nei][0], current_fitness, -1, -1, current_sol]
             Data1.append(temp)
             
-            if i % 10 < 7:
-                used[choose] += 1
-                if flag == True:
-                    score[choose] += 0.3
-                elif current_fitness - prev_fitness < epsilon:
-                    score[choose] += 0.2
+            used[choose] += 1
+            if flag == True:
+                score[choose] += 0.5
+            elif current_fitness - prev_fitness < epsilon:
+                score[choose] += 0.3
+            else:
+                score[choose] += 0.1
+            for j in range(len(nei_set)):
+                if used[j] == 0:
+                    continue
                 else:
-                    score[choose] += 0.1
-                for j in range(len(nei_set)):
-                    if used[j] == 0:
-                        continue
-                    else:
-                        weight[j] = (1 - factor)*weight[j] + factor*score[j]/used[j]
+                    weight[j] = (1 - factor)*weight[j] + factor*score[j]/used[j]
             if flag == True:
                 step = [LOOP_IMPROVED, T]
-
 
             # print("------------------",i,"------------------")
             # print(current_neighborhood[index_best_nei][0])
@@ -383,7 +372,7 @@ def Tabu_search_for_CVRP():
         print(used, score)
         if best_fitness - prev_f < epsilon:
             T = 0
-        else:
+        else: 
             T += 1
 
     '''for ii in range(len(BEST)):
@@ -433,9 +422,9 @@ for i in range(len(datatype)):
         dataList.append(datatemp)
 
 
-for k in range(1): #len(dataList)):
+for k in range(7, len(dataList)):
     print(k, dataList[k])
-    file_path = "test_data\\Smith\\TSPrd(time)\\Solomon\\10"
+    file_path = "test_data\\Smith\\TSPrd(time)\\Solomon\\15" #Sửa file path thành bộ 10 15 20
     to_run = str(file_path) + "\\" + str(dataList[k])
     Data.read_data(to_run)
     # to_run = str(Data.file_path) + "\\" + "C101_1.dat"
@@ -470,9 +459,9 @@ for k in range(1): #len(dataList)):
     print(result)
     print(run_time)
     avg_step = [sum(step_avg)/ITE, sum(step_avg1)/ITE]
-    wb = openpyxl.load_workbook('Result_5.xlsx')
+    wb = openpyxl.load_workbook('Smith.xlsx')
     avg_time = sum(run_time)/len(run_time)
-    sheet = wb['Factor(0,3;0,5)_Smith']
+    sheet = wb['10'] #Sheet 10, 15, 20 chay 1_1, Sheet 10(2_2) chay 2_2
 
     sheet.cell(row = k + 2, column = 1, value=dataList[k])
     for i, value in enumerate(result, start=1):
@@ -480,7 +469,8 @@ for k in range(1): #len(dataList)):
     sheet.cell(row = k + 2, column = 17, value = avg_time)
     for i, value in enumerate(avg_step, start=1):
         sheet.cell(row= k + 2, column= 18 + i, value=value)
+    #print("đây nè", sol)
     sheet.cell(row = k + 2, column = 18, value = str(sol))
-    wb.save('Result_51.xlsx')
+    wb.save('Smith.xlsx')
 
     wb.close()
