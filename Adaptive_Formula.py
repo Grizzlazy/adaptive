@@ -422,7 +422,7 @@ for i in range(len(datatype)):
         dataList.append(datatemp)
 
 
-for k in range(7, len(dataList)):
+for k in range(len(dataList)):
     print(k, dataList[k])
     file_path = "test_data\\Smith\\TSPrd(time)\\Solomon\\15" #Sửa file path thành bộ 10 15 20
     to_run = str(file_path) + "\\" + str(dataList[k])
